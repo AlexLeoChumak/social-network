@@ -1,0 +1,52 @@
+ion-header {
+  border-bottom: 1px solid var(--ion-color-light-tint);
+}
+
+.toolbar-wrapper {
+  display: flex;
+  max-width: 1128px;
+  margin: auto;
+}
+
+.social-logo {
+  font-size: 40px;
+}
+
+ion-searchbar {
+  --box-shadow: none;
+  transform: scale(0.8);
+  margin-left: -25px;
+}
+
+ion-icon {
+  font-size: 24px;
+}
+
+ion-col {
+  width: 80px !important;
+  text-align: center;
+}
+
+ion-col p {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+}
+
+ion-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--ion-color-danger);
+  position: absolute;
+  margin: -35px 0 0 39px;
+  min-height: 18px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+}
+
+ion-avatar {
+  width: 24px;
+  height: 24px;
+  margin: auto auto 5px;
+}

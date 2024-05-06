@@ -21,30 +21,33 @@
         <ion-row class="ion-justify-content-end">
           <ion-col size="auto">
             <ion-icon name="home"></ion-icon>
-            <p>Home</p>
+            <span>Home</span>
           </ion-col>
           <ion-col size="auto">
             <ion-icon name="people"></ion-icon>
-            <p>My Network</p>
+            <span>My Network</span>
           </ion-col>
           <ion-col size="auto">
             <ion-icon name="briefcase"></ion-icon>
-            <p>Jobs</p>
+            <span>Jobs</span>
           </ion-col>
           <ion-col size="auto">
             <ion-icon name="chatbox-ellipses"></ion-icon>
-            <p>Messaging</p>
+            <span>Messaging</span>
           </ion-col>
           <ion-col size="auto">
             <ion-icon name="notifications"></ion-icon>
             <ion-badge><small>399</small></ion-badge>
-            <p>Notifications</p>
+            <span>Notifications</span>
           </ion-col>
-          <ion-col size="auto">
+          <ion-col size="auto" (click)="presentPopover($event)">
             <ion-avatar>
               <ion-img src="/assets/images/me.jpg" alt="avatar"></ion-img>
             </ion-avatar>
-            <p class="header-avatar">Me</p>
+            <div class="header-username">
+              <span class="header-avatar">Me </span>
+              <ion-icon name="caret-down-outline"></ion-icon>
+            </div>
           </ion-col>
         </ion-row>
       </ion-grid>

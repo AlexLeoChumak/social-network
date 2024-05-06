@@ -35,3 +35,9 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+.my-custom-class .popover-content {
+  width: 300px;
+  margin-top: 16px;
+  --box-shadow: none;
+}

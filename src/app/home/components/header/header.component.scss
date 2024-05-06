@@ -27,7 +27,8 @@ ion-col {
   text-align: center;
 }
 
-ion-col p {
+ion-col span {
+  display: block;
   font-size: 12px;
   font-weight: 400;
   margin: 0;
@@ -48,5 +49,15 @@ ion-badge {
 ion-avatar {
   width: 24px;
   height: 24px;
-  margin: auto auto 5px;
+  margin: auto auto 3px;
+}
+
+ion-icon[name="caret-down-outline"] {
+  font-size: 16px;
+}
+
+.header-username {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

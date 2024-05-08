@@ -11,6 +11,7 @@ import { AdvertisingComponent } from './components/advertising/advertising.compo
 import { ModalComponent } from './components/modal/modal.component';
 import { ProfileSummaryComponent } from './components/profile-summary/profile-summary.component';
 import { StartPostComponent } from './components/start-post/start-post.component';
+import { AllPostsComponent } from './components/all-posts/all-posts.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
@@ -22,6 +23,7 @@ import { StartPostComponent } from './components/start-post/start-post.component
     ModalComponent,
     ProfileSummaryComponent,
     StartPostComponent,
+    AllPostsComponent,
   ],
 })
 export class HomePageModule {}

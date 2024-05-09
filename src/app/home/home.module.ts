@@ -12,6 +12,7 @@ import { ModalComponent } from './components/modal/modal.component';
 import { ProfileSummaryComponent } from './components/profile-summary/profile-summary.component';
 import { StartPostComponent } from './components/start-post/start-post.component';
 import { AllPostsComponent } from './components/all-posts/all-posts.component';
+import { TabsComponent } from './components/tabs/tabs.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
@@ -24,6 +25,7 @@ import { AllPostsComponent } from './components/all-posts/all-posts.component';
     ProfileSummaryComponent,
     StartPostComponent,
     AllPostsComponent,
+    TabsComponent,
   ],
 })
 export class HomePageModule {}

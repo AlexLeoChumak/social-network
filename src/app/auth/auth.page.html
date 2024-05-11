@@ -1,0 +1,111 @@
+<ion-content>
+  <div class="title-container">
+    <ion-text class="linkedin-text" color="primary">Linked</ion-text>
+    <ion-icon
+      class="linkedin-icon"
+      name="logo-linkedin"
+      color="primary"
+    ></ion-icon>
+  </div>
+  <div class="subtitle-container">Make the most of your professional life</div>
+
+  <form #form="ngForm" (ngSubmit)="onSubmit()">
+    <ion-card>
+      <ng-container *ngIf="submissionType === 'join'">
+        <ion-item>
+          <ion-label position="floating">First name</ion-label>
+          <ion-input
+            #firstNameInput="ngModel"
+            ngModel
+            type="text"
+            name="firstName"
+            required
+          ></ion-input>
+        </ion-item>
+        <ion-text
+          color="danger"
+          *ngIf="firstNameInput.invalid && firstNameInput.touched"
+        >
+          Please enter your first name
+        </ion-text>
+
+        <ion-item>
+          <ion-label position="floating">Last name</ion-label>
+          <ion-input
+            #lastNameInput="ngModel"
+            ngModel
+            type="text"
+            name="lastName"
+            required
+          ></ion-input>
+        </ion-item>
+        <ion-text
+          color="danger"
+          *ngIf="lastNameInput.invalid && lastNameInput.touched"
+        >
+          Please enter your last name
+        </ion-text>
+      </ng-container>
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          #emailInput="ngModel"
+          ngModel
+          type="email"
+          name="email"
+          required
+          email
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="emailInput.invalid && emailInput.touched">
+        <span *ngIf="emailInput.errors?.['required']">
+          Please enter your email address
+        </span>
+        <span *ngIf="emailInput.errors?.['email']">
+          Please enter valid email address
+        </span>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input
+          #passwordInput="ngModel"
+          ngModel
+          type="password"
+          name="password"
+          required
+        ></ion-input>
+      </ion-item>
+      <ion-text
+        color="danger"
+        *ngIf="passwordInput.invalid && passwordInput.touched"
+      >
+        Please enter your password
+      </ion-text>
+
+      <div *ngIf="submissionType === 'join'" class="terms-and-conditions">
+        By clicking Agree & Join, you agree to the LinkedIn&nbsp;
+        <ion-text color="primary">User Agreement</ion-text>
+        <ion-text color="primary">Privacy Policy</ion-text>
+        <ion-text color="primary">Cookie Policy</ion-text>
+      </div>
+      <ion-button
+        [disabled]="form.invalid || isSubmitted"
+        type="submit"
+        shape="round"
+        expand="block"
+      >
+        {{ submissionType === 'join' ? 'Accept & Join' : 'Sign In' }}
+      </ion-button>
+    </ion-card>
+  </form>
+
+  <div class="toggle-text">
+    {{ submissionType === 'login' ? 'New to LinkedIn' : 'Already on LinkedIn'}}
+    &nbsp;
+    <ion-text (click)="toggleText()" color="primary">
+      {{ submissionType === 'login' ? 'Join Now' : 'Sign In'}}
+    </ion-text>
+  </div>
+</ion-content>

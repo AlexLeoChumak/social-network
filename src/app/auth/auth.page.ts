@@ -1,17 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from './services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.page.html',
   styleUrls: ['./auth.page.scss'],
 })
-export class AuthPage implements OnInit {
+export class AuthPage implements OnInit, OnDestroy {
   @ViewChild('form') form!: NgForm;
   submissionType: 'login' | 'join' = 'login';
   isSubmitted: boolean = false;
+  registerUserSub!: Subscription;
+  loginSub!: Subscription;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {}
 
@@ -19,17 +23,38 @@ export class AuthPage implements OnInit {
     if (this.form.invalid) return;
     this.isSubmitted = true;
 
+    const { firstName, lastName, email, password } = this.form.value;
+
     if (this.submissionType === 'login') {
-      console.log('submit login');
+      this.loginSub = this.authService.login(email, password).subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        // добавить логику для мэсэджа юзеру
+        error: (err) => console.log(err),
+      });
     } else {
-      console.log('submit join');
+      this.registerUserSub = this.authService
+        .registerUser({ firstName, lastName, email, password })
+        .subscribe({
+          next: (res) => {
+            console.log(res);
+            this.toggleText();
+          },
+          // добавить логику для мэсэджа юзеру
+          error: (err) => console.log(err),
+        });
     }
 
-    this.form.reset();
     this.isSubmitted = false;
   }
 
   toggleText() {
     this.submissionType = this.submissionType === 'login' ? 'join' : 'login';
+  }
+
+  ngOnDestroy(): void {
+    this.registerUserSub ? this.registerUserSub.unsubscribe() : null;
+    this.loginSub ? this.loginSub.unsubscribe() : null;
   }
 }

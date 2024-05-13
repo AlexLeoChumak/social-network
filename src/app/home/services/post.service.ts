@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from '../models/post.interface';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class PostService {
 
   getSelectedPosts(params: string) {
     return this.http.get<Post[]>(
-      'http://localhost:3000/api/feed/pagination' + params
+      `${environment.baseApiUrl}/feed/pagination${params}`
     );
   }
 }

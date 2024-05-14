@@ -89,4 +89,10 @@ export class AuthService {
         })
       );
   }
+
+  logout(): void {
+    this.user$.next(null);
+    Preferences.remove({ key: 'token' });
+    this.router.navigate(['/auth']);
+  }
 }

@@ -30,11 +30,23 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  get isUserLoggedIn(): Observable<boolean> {
+  get isUserLoggedIn(): boolean {
+    return !!this.user$.getValue();
+  }
+
+  get isUserLoggedInObservable(): Observable<boolean> {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
         const isUserAuthenticated = userResponse !== null;
         return of(isUserAuthenticated);
+      })
+    );
+  }
+
+  get userRole(): Observable<Role | null> {
+    return this.user$.asObservable().pipe(
+      switchMap((userResponse: UserResponse | null) => {
+        return userResponse ? of(userResponse.user.role) : of(null);
       })
     );
   }
@@ -69,6 +81,7 @@ export class AuthService {
 
           const decodedToken: UserResponse = jwtDecode(response.token);
           this.user$.next(decodedToken);
+          this.router.navigate(['/']);
         }),
         catchError((err) => {
           console.error(err);

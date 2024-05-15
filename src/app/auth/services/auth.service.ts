@@ -5,12 +5,13 @@ import {
   BehaviorSubject,
   Observable,
   catchError,
+  from,
   of,
   switchMap,
   tap,
   throwError,
 } from 'rxjs';
-import { Preferences } from '@capacitor/preferences';
+import { GetResult, Preferences } from '@capacitor/preferences';
 import { jwtDecode } from 'jwt-decode';
 
 import { NewUser } from '../models/newUser.interface';
@@ -30,15 +31,15 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  get isUserLoggedIn(): boolean {
-    return !!this.user$.getValue();
-  }
+  // проверка авторизации без Observable
+  // get isUserLoggedIn(): boolean {
+  //   return !!this.user$.getValue();
+  // }
 
-  get isUserLoggedInObservable(): Observable<boolean> {
+  get isUserLoggedIn(): Observable<boolean> {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
-        const isUserAuthenticated = userResponse !== null;
-        return of(isUserAuthenticated);
+        return of(!!userResponse);
       })
     );
   }
@@ -88,6 +89,34 @@ export class AuthService {
           return throwError(() => err);
         })
       );
+  }
+
+  isTokenInStorage(): Observable<boolean> {
+    return from(
+      Preferences.get({
+        key: 'token',
+      })
+    ).pipe(
+      switchMap((data: GetResult) => {
+        if (!data || !data.value) return of(false);
+
+        const decodedToken: any = jwtDecode(data.value);
+        const isExpired = new Date() > new Date(decodedToken.exp * 1000);
+
+        if (isExpired) return of(false);
+
+        if (decodedToken.user) {
+          this.user$.next(decodedToken.user);
+          return of(true);
+        }
+        return of(false);
+      }),
+      catchError((err) => {
+        console.error(err);
+        this.logout();
+        return throwError(() => err);
+      })
+    );
   }
 
   logout(): void {

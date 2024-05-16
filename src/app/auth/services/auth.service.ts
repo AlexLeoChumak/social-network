@@ -48,6 +48,10 @@ export class AuthService {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
         return userResponse ? of(userResponse.user.role) : of(null);
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
       })
     );
   }

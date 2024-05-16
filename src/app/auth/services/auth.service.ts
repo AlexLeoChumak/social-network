@@ -47,7 +47,7 @@ export class AuthService {
   get userRole(): Observable<Role | null> {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
-        return userResponse ? of(userResponse.user.role) : of(null);
+        return userResponse?.user ? of(userResponse.user.role) : of(null);
       }),
       catchError((err) => {
         console.error(err);

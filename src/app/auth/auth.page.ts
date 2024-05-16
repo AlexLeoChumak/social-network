@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-auth',
@@ -28,6 +29,7 @@ export class AuthPage implements OnInit, OnDestroy {
     if (this.submissionType === 'login') {
       this.loginSub = this.authService.login(email, password).subscribe({
         next: (res) => {
+          this.form.reset();
           console.log(res);
         },
         // добавить логику для мэсэджа юзеру

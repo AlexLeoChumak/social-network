@@ -1,14 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+
 import { ModalComponent } from '../modal/modal.component';
+import { PostService } from '../../services/post.service';
+import { Subscription, switchMap } from 'rxjs';
+import { Post } from '../../models/post.interface';
 
 @Component({
   selector: 'app-start-post',
   templateUrl: './start-post.component.html',
   styleUrls: ['./start-post.component.scss'],
 })
-export class StartPostComponent implements OnInit {
-  constructor(public modalController: ModalController) {}
+export class StartPostComponent implements OnInit, OnDestroy {
+  createPostSub!: Subscription;
+
+  constructor(
+    public modalController: ModalController,
+    private postService: PostService
+  ) {}
 
   ngOnInit() {}
 
@@ -19,7 +28,19 @@ export class StartPostComponent implements OnInit {
     });
 
     await modal.present();
+    const { data } = await modal.onDidDismiss();
 
-    const { data, role } = await modal.onDidDismiss();
+    if (data) {
+      this.createPostSub = this.postService.createPost(data).subscribe({
+        next: (post) => {
+          this.postService.updatePostBehaviorSubject(post);
+        },
+        error: (err) => console.error(err),
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.createPostSub ? this.createPostSub.unsubscribe() : null;
   }
 }

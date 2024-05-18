@@ -15,22 +15,13 @@ export class ModalComponent implements OnInit {
   ngOnInit() {}
 
   onPost() {
-    if (!this.form.valid) return;
+    if (this.form.invalid) return;
 
     const body = this.form.value['body'];
-
-    this.modalController.dismiss(
-      {
-        post: {
-          body,
-          createdAt: new Date(),
-        },
-      },
-      'post'
-    );
+    this.modalController.dismiss(body, 'post');
   }
 
   onDismiss() {
-    this.modalController.dismiss(null, 'dismiss');
+    this.modalController.dismiss(null);
   }
 }

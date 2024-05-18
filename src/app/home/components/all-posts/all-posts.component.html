@@ -1,4 +1,4 @@
-<div class="all-post-container">
+<div *ngIf="allLoadedPosts.length; else noPosts" class="all-post-container">
   <ion-content>
     <ion-list>
       <ion-card *ngFor="let post of allLoadedPosts">
@@ -46,7 +46,7 @@
       </ion-card>
     </ion-list>
 
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll threshold="200px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         loadingSpinner="bubbles"
         loadingText="Loading more data..."
@@ -57,3 +57,5 @@
 
   <div class="hide-scroll"></div>
 </div>
+
+<ng-template #noPosts><span>No posts found</span></ng-template>

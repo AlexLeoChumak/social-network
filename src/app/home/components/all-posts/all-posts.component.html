@@ -20,6 +20,20 @@
                 <ion-icon color="dark" name="globe-outline"></ion-icon>
               </div>
             </ion-col>
+
+            <ion-col
+              *ngIf="post.author.id === currentUser?.user?.id"
+              class="ion-align-self-start"
+            >
+              <ion-buttons class="ion-align-self-start ion-justify-content-end">
+                <ion-button (click)="presentUpdatePostModal(post.id)">
+                  <ion-icon color="dark" name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button (click)="deletePost(post.id)">
+                  <ion-icon color="danger" name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-col>
           </ion-row>
 
           <p class="post-body">{{ post.body }}</p>

@@ -44,6 +44,15 @@ export class AuthService {
     );
   }
 
+  get currentUser(): Observable<UserResponse | null> {
+    return this.user$.asObservable().pipe(
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      })
+    );
+  }
+
   get userRole(): Observable<Role | null> {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
@@ -86,6 +95,7 @@ export class AuthService {
 
           const decodedToken: UserResponse = jwtDecode(response.token);
           this.user$.next(decodedToken);
+
           this.router.navigate(['/']);
         }),
         catchError((err) => {
@@ -105,12 +115,14 @@ export class AuthService {
         if (!data || !data.value) return of(false);
 
         const decodedToken: any = jwtDecode(data.value);
+
         const isExpired = new Date() > new Date(decodedToken.exp * 1000);
 
         if (isExpired) return of(false);
 
         if (decodedToken.user) {
-          this.user$.next(decodedToken.user);
+          this.user$.next(decodedToken);
+
           return of(true);
         }
         return of(false);
@@ -125,7 +137,7 @@ export class AuthService {
 
   logout(): void {
     this.user$.next(null);
-    Preferences.remove({ key: 'token' });
     this.router.navigate(['/auth']);
+    Preferences.remove({ key: 'token' });
   }
 }

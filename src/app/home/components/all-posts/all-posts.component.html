@@ -26,7 +26,9 @@
               class="ion-align-self-start"
             >
               <ion-buttons class="ion-align-self-start ion-justify-content-end">
-                <ion-button (click)="presentUpdatePostModal(post.id)">
+                <ion-button
+                  (click)="presentUpdatePostModal(post.id, post.body)"
+                >
                   <ion-icon color="dark" name="create-outline"></ion-icon>
                 </ion-button>
                 <ion-button (click)="deletePost(post.id)">

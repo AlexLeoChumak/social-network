@@ -1,6 +1,6 @@
 <div>
   <div class="heading ion-padding">
-    <ion-text>Create a post</ion-text>
+    <ion-text>{{ postId ? "Edit" : "Create" }} a post</ion-text>
     <ion-button
       (click)="onDismiss()"
       size="small"
@@ -39,6 +39,7 @@
       ngModel
       name="body"
       required
+      [(ngModel)]="oldText"
     >
     </ion-textarea>
     <ion-button fill="clear">Add hashtag</ion-button>
@@ -80,9 +81,9 @@
           <ion-text class="view-status">Anyone</ion-text>
         </ion-button>
       </div>
-      <ion-button [disabled]="!form.valid" type="submit" class="ion-margin"
-        >Post</ion-button
-      >
+      <ion-button [disabled]="!form.valid" type="submit" class="ion-margin">{{
+        postId ? "Edit" : "Post"
+      }}</ion-button>
     </div>
   </form>
 </div>

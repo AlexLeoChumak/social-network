@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScrollCustomEvent } from '@ionic/core';
-import { IonInfiniteScroll } from '@ionic/angular';
+import { IonInfiniteScroll, ModalController } from '@ionic/angular';
 import { Subscription, async, filter, tap } from 'rxjs';
 
 import { PostService } from '../../services/post.service';
 import { Post } from '../../models/post.interface';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { UserResponse } from 'src/app/auth/models/userResponse.interface';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-all-posts',
@@ -27,10 +28,12 @@ export class AllPostsComponent implements OnInit, OnDestroy {
   getPostBehaviorSubjectSub!: Subscription;
   currentUserSub!: Subscription;
   deletePostSub!: Subscription;
+  updatePostSub!: Subscription;
 
   constructor(
     private postService: PostService,
-    private authService: AuthService
+    private authService: AuthService,
+    public modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -97,27 +100,47 @@ export class AllPostsComponent implements OnInit, OnDestroy {
       });
   }
 
-  presentUpdatePostModal(postId: number) {}
+  async presentUpdatePostModal(postId: number, oldText: string) {
+    const modal = await this.modalController.create({
+      component: ModalComponent,
+      cssClass: 'my-custom-class-modal-post',
+      componentProps: {
+        postId,
+        oldText,
+      },
+    });
+
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+
+    if (!data) return;
+
+    this.updatePostSub = this.postService.updatePost(postId, data).subscribe({
+      next: () => {
+        const postIndex = this.allLoadedPosts.findIndex(
+          (post: Post) => post.id === postId
+        );
+        this.allLoadedPosts[postIndex].body = data;
+      },
+      error: (err) => console.error(err), //add notification for user
+    });
+  }
 
   deletePost(postId: number) {
-    this.deletePostSub = this.postService
-      .deletePost(postId)
-      .pipe(
-        tap(() => {
-          this.allLoadedPosts = this.allLoadedPosts.filter(
-            (post) => post.id !== postId
-          );
-        })
-      )
-      .subscribe({
-        next: () => console.log(), //add notification for user
-        error: (err) => console.error(err), //add notification for user
-      });
+    this.deletePostSub = this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.allLoadedPosts = this.allLoadedPosts.filter(
+          (post) => post.id !== postId
+        );
+      }, //add notification for user
+      error: (err) => console.error(err), //add notification for user
+    });
   }
 
   ngOnDestroy(): void {
     this.getSelectedPostsSub ? this.getSelectedPostsSub.unsubscribe() : null;
     this.currentUserSub ? this.currentUserSub.unsubscribe() : null;
+    this.updatePostSub ? this.updatePostSub.unsubscribe() : null;
     this.deletePostSub ? this.deletePostSub.unsubscribe() : null;
     this.getPostBehaviorSubjectSub
       ? this.getPostBehaviorSubjectSub.unsubscribe()

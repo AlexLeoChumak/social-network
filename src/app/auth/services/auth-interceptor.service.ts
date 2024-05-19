@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
-import { Observable, from, switchMap } from 'rxjs';
+import { Observable, catchError, from, switchMap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +35,10 @@ export class AuthInterceptorService implements HttpInterceptor {
         }
 
         return next.handle(req);
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
       })
     );
   }

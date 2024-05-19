@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 
 import { Post } from '../models/post.interface';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +17,14 @@ export class PostService {
   private post$: BehaviorSubject<Post | null> =
     new BehaviorSubject<Post | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getSelectedPosts(params: string) {
     return this.http
       .get<Post[]>(`${environment.baseApiUrl}/feed/pagination${params}`)
       .pipe(
         catchError((err) => {
+          err.error.statusCode === 401 ? this.authService.logout() : null;
           console.error(err);
           return throwError(() => err);
         })
@@ -64,13 +66,13 @@ export class PostService {
     );
   }
 
-  //методы для private post$: BehaviorSubject
+  //методы для излучения и получения нового private post$: BehaviorSubject
 
   updatePostBehaviorSubject(newPost: Post) {
     this.post$.next(newPost);
   }
 
-  getPostBehaviorSubject(): Observable<Post | null> {
+  get postBehaviorSubject(): Observable<Post | null> {
     return this.post$.asObservable().pipe(
       catchError((err) => {
         console.error(err);

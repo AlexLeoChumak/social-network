@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScrollCustomEvent } from '@ionic/core';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, async, filter, tap } from 'rxjs';
 
 import { PostService } from '../../services/post.service';
 import { Post } from '../../models/post.interface';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { UserResponse } from 'src/app/auth/models/userResponse.interface';
 
 @Component({
   selector: 'app-all-posts',
@@ -18,20 +20,52 @@ export class AllPostsComponent implements OnInit, OnDestroy {
   allLoadedPosts: Post[] = [];
   numberOfPosts: number = 5;
   skipPosts: number = 0;
+  currentUser!: UserResponse | null;
+  user: any;
+
   getSelectedPostsSub!: Subscription;
   getPostBehaviorSubjectSub!: Subscription;
+  currentUserSub!: Subscription;
+  deletePostSub!: Subscription;
 
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.loadData(null);
     this.loadNewPost();
+    this.getCurrentUser();
+    // this.reloadData();
+  }
+
+  // reloadData() {
+  //   this.router.events
+  //     .pipe(
+  //       filter(
+  //         (event): event is NavigationEnd => event instanceof NavigationEnd
+  //       )
+  //     )
+  //     .subscribe((event: NavigationEnd) => {
+  //       if (event.urlAfterRedirects === '/home') {
+  //         this.loadData(null);
+  //       }
+  //     });
+  // }
+
+  getCurrentUser(): void {
+    this.currentUserSub = this.authService.currentUser.subscribe({
+      next: (currentUser) => {
+        this.currentUser = currentUser;
+      },
+      error: (err) => console.error(err), //add notification for user
+    });
   }
 
   loadNewPost() {
-    this.getPostBehaviorSubjectSub = this.postService
-      .getPostBehaviorSubject()
-      .subscribe({
+    this.getPostBehaviorSubjectSub =
+      this.postService.postBehaviorSubject.subscribe({
         next: (newPost) =>
           newPost ? this.allLoadedPosts.unshift(newPost) : null,
         error: (err) => console.error(err), //add notification for user
@@ -59,12 +93,32 @@ export class AllPostsComponent implements OnInit, OnDestroy {
 
           event ? event.target.complete() : null;
         },
-        error: (err) => console.log(err),
+        error: (err) => console.error(err), //add notification for user
+      });
+  }
+
+  presentUpdatePostModal(postId: number) {}
+
+  deletePost(postId: number) {
+    this.deletePostSub = this.postService
+      .deletePost(postId)
+      .pipe(
+        tap(() => {
+          this.allLoadedPosts = this.allLoadedPosts.filter(
+            (post) => post.id !== postId
+          );
+        })
+      )
+      .subscribe({
+        next: () => console.log(), //add notification for user
+        error: (err) => console.error(err), //add notification for user
       });
   }
 
   ngOnDestroy(): void {
     this.getSelectedPostsSub ? this.getSelectedPostsSub.unsubscribe() : null;
+    this.currentUserSub ? this.currentUserSub.unsubscribe() : null;
+    this.deletePostSub ? this.deletePostSub.unsubscribe() : null;
     this.getPostBehaviorSubjectSub
       ? this.getPostBehaviorSubjectSub.unsubscribe()
       : null;

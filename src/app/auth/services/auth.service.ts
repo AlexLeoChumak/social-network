@@ -56,6 +56,12 @@ export class AuthService {
     return this.http.get(`${environment.baseApiUrl}/user/image`);
   }
 
+  getUserImageName(): Observable<{ imageName: string }> {
+    return this.http.get<{ imageName: string }>(
+      `${environment.baseApiUrl}/user/image-name`
+    );
+  }
+
   // проверка авторизации без Observable
   // get isUserLoggedIn(): boolean {
   //   return !!this.user$.getValue();

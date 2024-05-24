@@ -34,6 +34,7 @@ ion-card-header {
     width: 72px;
     height: 72px;
     margin: auto;
+    cursor: pointer;
     border: 2px solid var(--ion-color-primary-contrast);
   }
 }
@@ -45,4 +46,8 @@ ion-card-content div {
 
 .connections {
   margin-top: 8px;
+}
+
+input[type="file"] {
+  display: none;
 }

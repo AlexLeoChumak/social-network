@@ -16,7 +16,9 @@
   </div>
 
   <ion-card-header class="ion-text-center">
-    <ion-avatar class="ion-margin-auto">
+    <input #fileUpload (change)="onFileSelect($event)" type="file" />
+
+    <ion-avatar (click)="fileUpload.click()" class="ion-margin-auto">
       <ion-img src="/assets/images/me.jpg"></ion-img>
     </ion-avatar>
     <ion-card-title class="ion-margin-top">Alex Chu</ion-card-title>

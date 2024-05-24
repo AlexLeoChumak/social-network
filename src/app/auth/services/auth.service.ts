@@ -62,6 +62,18 @@ export class AuthService {
     );
   }
 
+  updateUserImagePath(imagePath: string): Observable<UserResponse | null> {
+    return this.user$.pipe(
+      map((userResponse: UserResponse | null) => {
+        if (userResponse) {
+          userResponse.user.imagePath = imagePath;
+          this.user$.next(userResponse);
+        }
+        return userResponse;
+      })
+    );
+  }
+
   // проверка авторизации без Observable
   // get isUserLoggedIn(): boolean {
   //   return !!this.user$.getValue();

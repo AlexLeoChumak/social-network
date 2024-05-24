@@ -6,6 +6,7 @@ import {
   Observable,
   catchError,
   from,
+  map,
   of,
   switchMap,
   tap,
@@ -44,11 +45,11 @@ export class AuthService {
   }
 
   getDefaultFullImagePath(): string {
-    return 'http://localhost:3000/api/feed/image/blank-profile-picture.png';
+    return `${environment.baseApiUrl}/feed/image/blank-profile-picture.png`;
   }
 
   getFullImagePath(imagePath: string): string {
-    return `http://localhost:3000/api/feed/image/${imagePath}`;
+    return `${environment.baseApiUrl}/feed/image/${imagePath}`;
   }
 
   // проверка авторизации без Observable

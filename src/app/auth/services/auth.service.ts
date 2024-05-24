@@ -31,6 +31,26 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  get userFullImagePath(): Observable<string> {
+    return this.user$.asObservable().pipe(
+      switchMap((userResponse: UserResponse | null) => {
+        return of(
+          userResponse?.user?.imagePath
+            ? this.getFullImagePath(userResponse.user.imagePath)
+            : this.getDefaultFullImagePath()
+        );
+      })
+    );
+  }
+
+  getDefaultFullImagePath(): string {
+    return 'http://localhost:3000/api/feed/image/blank-profile-picture.png';
+  }
+
+  getFullImagePath(imagePath: string): string {
+    return `http://localhost:3000/api/feed/image/${imagePath}`;
+  }
+
   // проверка авторизации без Observable
   // get isUserLoggedIn(): boolean {
   //   return !!this.user$.getValue();

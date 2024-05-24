@@ -74,6 +74,25 @@ export class AuthService {
     );
   }
 
+  uploadUserImage(
+    formData: FormData
+  ): Observable<{ modifiedFileName: string }> {
+    return this.http
+      .post<{ modifiedFileName: string }>(
+        `${environment.baseApiUrl}/user/upload`,
+        formData
+      )
+      .pipe(
+        tap(({ modifiedFileName }) => {
+          const userResponse = this.user$.value;
+          userResponse
+            ? (userResponse.user.imagePath = modifiedFileName)
+            : null;
+          this.user$.next(userResponse);
+        })
+      );
+  }
+
   // проверка авторизации без Observable
   // get isUserLoggedIn(): boolean {
   //   return !!this.user$.getValue();

@@ -29,9 +29,11 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   validFileExtensions: ValidFileExtension[] = ['png', 'jpg', 'jpeg'];
   validMimeTypes: ValidMimeType[] = ['image/png', 'image/jpg', 'image/jpeg'];
 
+  userFullImagePath!: string;
   form!: FormGroup;
-  userRoleSub!: Subscription;
-  uploadUserImageSub!: Subscription;
+  private userRoleSub!: Subscription;
+  private uploadUserImageSub!: Subscription;
+  private userFullImagePathSub!: Subscription;
 
   constructor(private authService: AuthService) {}
 
@@ -43,6 +45,12 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
     this.userRoleSub = this.authService.userRole.subscribe(
       (role: Role | null) => {
         role ? (this.bannerColors = this.getBannerColors(role)) : null;
+      }
+    );
+
+    this.userFullImagePathSub = this.authService.userFullImagePath.subscribe(
+      (fullImagePath: string) => {
+        this.userFullImagePath = fullImagePath;
       }
     );
   }
@@ -61,8 +69,8 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
       this.uploadUserImageSub = this.authService
         .uploadUserImage(formData)
         .subscribe({
-          next: (res) => console.log(res), // уведомление об успешной загрузке изображения
-          error: (err) => console.error(err), // уведомление об ошибке загрузки изображения
+          next: (res) => console.log(res), // notification of successful image upload
+          error: (err) => console.error(err), // image upload error notification
         });
 
       this.form.reset();
@@ -92,5 +100,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.userRoleSub ? this.userRoleSub.unsubscribe() : null;
     this.uploadUserImageSub ? this.uploadUserImageSub.unsubscribe() : null;
+    this.userFullImagePathSub ? this.userFullImagePathSub.unsubscribe() : null;
   }
 }

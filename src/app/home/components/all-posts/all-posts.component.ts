@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScrollCustomEvent } from '@ionic/core';
 import { IonInfiniteScroll, ModalController } from '@ionic/angular';
-import { Subscription, async, filter, tap } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { PostService } from '../../services/post.service';
 import { Post } from '../../models/post.interface';

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { fromBuffer, FileTypeResult } from 'file-type';
-import { Subscription, from, of, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { Role } from 'src/app/auth/models/user.interface';
 import { AuthService } from 'src/app/auth/services/auth.service';

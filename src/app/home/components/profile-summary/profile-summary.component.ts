@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { fromBuffer, FileTypeResult } from 'file-type';
+import { Subscription, from, of, switchMap } from 'rxjs';
 
 import { Role } from 'src/app/auth/models/user.interface';
 import { AuthService } from 'src/app/auth/services/auth.service';
@@ -46,8 +47,24 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
     );
   }
 
-  onFileSelect(event: Event) {
-    console.log('selected');
+  onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let file: File;
+
+    if (input.files && input.files.length > 0) {
+      file = input.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.authService.uploadUserImage(formData).subscribe({
+        next: (res) => console.log(res), // уведомление об успешной загрузке изображения
+        error: (err) => console.error(err), // уведомление об ошибке загрузки изображения
+      });
+
+      this.form.reset();
+    }
   }
 
   private getBannerColors(role: Role): BannerColors {

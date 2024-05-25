@@ -37,20 +37,20 @@ export class AuthService {
       switchMap((userResponse: UserResponse | null) => {
         return of(
           userResponse?.user?.imagePath
-            ? this.getFullImagePath(userResponse.user.imagePath)
-            : this.getDefaultFullImagePath()
+            ? `${environment.baseApiUrl}/feed/image/${userResponse.user.imagePath}`
+            : `${environment.baseApiUrl}/feed/image/default-user-image.jpg`
         );
       })
     );
   }
 
-  getDefaultFullImagePath(): string {
-    return `${environment.baseApiUrl}/feed/image/blank-profile-picture.png`;
-  }
+  // getDefaultFullImagePath(): string {
+  //   return `${environment.baseApiUrl}/feed/image/default-user-image.jpg`;
+  // }
 
-  getFullImagePath(imagePath: string): string {
-    return `${environment.baseApiUrl}/feed/image/${imagePath}`;
-  }
+  // getFullImagePath(imagePath: string): string {
+  //   return `${environment.baseApiUrl}/feed/image/${imagePath}`;
+  // }
 
   getUserImage() {
     return this.http.get(`${environment.baseApiUrl}/user/image`);
@@ -62,6 +62,7 @@ export class AuthService {
     );
   }
 
+  //?????
   updateUserImagePath(imagePath: string): Observable<UserResponse | null> {
     return this.user$.pipe(
       map((userResponse: UserResponse | null) => {
@@ -74,20 +75,16 @@ export class AuthService {
     );
   }
 
-  uploadUserImage(
-    formData: FormData
-  ): Observable<{ modifiedFileName: string }> {
+  uploadUserImage(formData: FormData): Observable<{ raw: string }> {
     return this.http
-      .post<{ modifiedFileName: string }>(
-        `${environment.baseApiUrl}/user/upload`,
-        formData
-      )
+      .post<{ raw: string }>(`${environment.baseApiUrl}/user/upload`, formData)
       .pipe(
-        tap(({ modifiedFileName }) => {
+        tap((res: { raw: string }) => {
           const userResponse = this.user$.value;
-          userResponse
-            ? (userResponse.user.imagePath = modifiedFileName)
-            : null;
+
+          userResponse ? (userResponse.user.imagePath = res.raw) : null;
+          console.log(userResponse);
+
           this.user$.next(userResponse);
         })
       );

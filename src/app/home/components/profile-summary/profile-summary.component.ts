@@ -31,6 +31,7 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   userRoleSub!: Subscription;
+  uploadUserImageSub!: Subscription;
 
   constructor(private authService: AuthService) {}
 
@@ -57,10 +58,12 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
       const formData = new FormData();
       formData.append('file', file);
 
-      this.authService.uploadUserImage(formData).subscribe({
-        next: (res) => console.log(res), // уведомление об успешной загрузке изображения
-        error: (err) => console.error(err), // уведомление об ошибке загрузки изображения
-      });
+      this.uploadUserImageSub = this.authService
+        .uploadUserImage(formData)
+        .subscribe({
+          next: (res) => console.log(res), // уведомление об успешной загрузке изображения
+          error: (err) => console.error(err), // уведомление об ошибке загрузки изображения
+        });
 
       this.form.reset();
     }
@@ -88,5 +91,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userRoleSub ? this.userRoleSub.unsubscribe() : null;
+    this.uploadUserImageSub ? this.uploadUserImageSub.unsubscribe() : null;
   }
 }

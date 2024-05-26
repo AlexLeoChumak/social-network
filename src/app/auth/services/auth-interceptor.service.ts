@@ -32,7 +32,6 @@ export class AuthInterceptorService implements HttpInterceptor {
           });
           return next.handle(cloneRequest);
         }
-
         return next.handle(req);
       }),
       catchError((err) => {

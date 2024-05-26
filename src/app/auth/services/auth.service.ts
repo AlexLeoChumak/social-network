@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   catchError,
   from,
@@ -75,17 +76,42 @@ export class AuthService {
     );
   }
 
-  uploadUserImage(formData: FormData): Observable<{ raw: string }> {
+  uploadUserImage(formData: FormData): Observable<{ token: string }> {
     return this.http
       .post<{ raw: string }>(`${environment.baseApiUrl}/user/upload`, formData)
       .pipe(
-        tap((res: { raw: string }) => {
+        switchMap((responseWithImageName: { raw: string }) => {
           const userResponse = this.user$.value;
 
-          userResponse ? (userResponse.user.imagePath = res.raw) : null;
-          console.log(userResponse);
+          if (userResponse) {
+            userResponse.user.imagePath = responseWithImageName.raw;
+            this.user$.next(userResponse);
+            return this.updatingTokenAfterImageChange();
+          }
 
-          this.user$.next(userResponse);
+          return EMPTY;
+        })
+      );
+  }
+
+  updatingTokenAfterImageChange(): Observable<{ token: string }> {
+    const user = this.user$.value;
+
+    return this.http
+      .post<{ token: string }>(
+        `${environment.baseApiUrl}/user/update-image`,
+        user
+      )
+      .pipe(
+        tap((response: { token: string }) => {
+          Preferences.set({
+            key: 'token',
+            value: response.token,
+          });
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
         })
       );
   }
@@ -174,7 +200,6 @@ export class AuthService {
         if (!data || !data.value) return of(false);
 
         const decodedToken: any = jwtDecode(data.value);
-
         const isExpired = new Date() > new Date(decodedToken.exp * 1000);
 
         if (isExpired) return of(false);

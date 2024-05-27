@@ -6,11 +6,15 @@
           <ion-row class="ion-align-items-center ion-justify-content-center">
             <ion-col size="auto" class="ion-padding">
               <ion-avatar>
-                <ion-img src="/assets/images/me.jpg"></ion-img>
+                <ion-img
+                  [src]="getFullImagePath(post.author.imagePath)"
+                ></ion-img>
               </ion-avatar>
             </ion-col>
             <ion-col>
-              <p class="full-name">Alex Chu</p>
+              <p class="full-name">
+                {{ post.author.firstName }} {{ post.author.lastName }}
+              </p>
               <p class="role">Fullstack developer</p>
               <div class="meta-data">
                 <span>1d</span>

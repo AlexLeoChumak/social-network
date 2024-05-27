@@ -25,7 +25,8 @@ import { UserResponse } from '../models/userResponse.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  private user$ = new BehaviorSubject<UserResponse | null>(null);
+  private user$: BehaviorSubject<UserResponse | null> =
+    new BehaviorSubject<UserResponse | null>(null);
 
   private httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -33,34 +34,52 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  updateUserBehaviorSubject(newUser: UserResponse) {
+    this.user$.next(newUser);
+  }
+
   get userFullImagePath(): Observable<string> {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
         return of(
           userResponse?.user?.imagePath
-            ? `${environment.baseApiUrl}/feed/image/${userResponse.user.imagePath}`
-            : `${environment.baseApiUrl}/feed/image/default-user-image.jpg`
+            ? this.getFullImagePath(userResponse.user.imagePath)
+            : this.getDefaultFullImagePath()
         );
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
       })
     );
   }
 
-  // getDefaultFullImagePath(): string {
-  //   return `${environment.baseApiUrl}/feed/image/default-user-image.jpg`;
-  // }
+  getFullImagePath(imagePath: string | undefined): string {
+    return `${environment.baseApiUrl}/feed/image/${imagePath}`;
+  }
 
-  // getFullImagePath(imagePath: string): string {
-  //   return `${environment.baseApiUrl}/feed/image/${imagePath}`;
-  // }
+  getDefaultFullImagePath(): string {
+    return `${environment.baseApiUrl}/feed/image/default-user-image.jpg`;
+  }
 
   getUserImage() {
-    return this.http.get(`${environment.baseApiUrl}/user/image`);
+    return this.http.get(`${environment.baseApiUrl}/user/image`).pipe(
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      })
+    );
   }
 
   getUserImageName(): Observable<{ imageName: string }> {
-    return this.http.get<{ imageName: string }>(
-      `${environment.baseApiUrl}/user/image-name`
-    );
+    return this.http
+      .get<{ imageName: string }>(`${environment.baseApiUrl}/user/image-name`)
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
   }
 
   //?????
@@ -72,29 +91,40 @@ export class AuthService {
           this.user$.next(userResponse);
         }
         return userResponse;
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
       })
     );
   }
 
   uploadUserImage(formData: FormData): Observable<{ token: string }> {
     return this.http
-      .post<{ raw: string }>(`${environment.baseApiUrl}/user/upload`, formData)
+      .post<{ imagePath: string }>(
+        `${environment.baseApiUrl}/user/upload`,
+        formData
+      )
       .pipe(
-        switchMap((responseWithImageName: { raw: string }) => {
+        switchMap((responseWithImageName) => {
           const userResponse = this.user$.value;
 
-          if (userResponse) {
-            userResponse.user.imagePath = responseWithImageName.raw;
+          if (userResponse && responseWithImageName) {
+            userResponse.user.imagePath = responseWithImageName.imagePath;
             this.user$.next(userResponse);
-            return this.updatingTokenAfterImageChange();
+            return this.updatingTokenAfterChangingProfilePicture();
           }
 
           return EMPTY;
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
         })
       );
   }
 
-  updatingTokenAfterImageChange(): Observable<{ token: string }> {
+  updatingTokenAfterChangingProfilePicture(): Observable<{ token: string }> {
     const user = this.user$.value;
 
     return this.http
@@ -125,6 +155,10 @@ export class AuthService {
     return this.user$.asObservable().pipe(
       switchMap((userResponse: UserResponse | null) => {
         return of(!!userResponse);
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
       })
     );
   }

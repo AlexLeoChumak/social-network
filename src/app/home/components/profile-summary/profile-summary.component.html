@@ -21,7 +21,9 @@
     <ion-avatar (click)="fileUpload.click()" class="ion-margin-auto">
       <ion-img *ngIf="userFullImagePath" [src]="userFullImagePath"></ion-img>
     </ion-avatar>
-    <ion-card-title class="ion-margin-top">Alex Chu</ion-card-title>
+    <ion-card-title class="ion-margin-top"
+      >{{ user?.user?.firstName }} {{ user?.user?.lastName }}</ion-card-title
+    >
     <ion-card-subtitle>Fullstack Developer</ion-card-subtitle>
   </ion-card-header>
 

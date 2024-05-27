@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 import { ModalComponent } from '../modal/modal.component';
 import { PostService } from '../../services/post.service';
-import { Subscription, switchMap } from 'rxjs';
-import { Post } from '../../models/post.interface';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-start-post',
@@ -12,14 +12,23 @@ import { Post } from '../../models/post.interface';
   styleUrls: ['./start-post.component.scss'],
 })
 export class StartPostComponent implements OnInit, OnDestroy {
-  createPostSub!: Subscription;
+  imagePath!: string;
+  private createPostSub!: Subscription;
+  private userFullImagePathSub!: Subscription;
 
   constructor(
     public modalController: ModalController,
-    private postService: PostService
+    private postService: PostService,
+    private authService: AuthService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userFullImagePathSub = this.authService.userFullImagePath.subscribe(
+      (imagePath: string) => {
+        this.imagePath = imagePath;
+      }
+    );
+  }
 
   async presentModal() {
     const modal = await this.modalController.create({
@@ -42,5 +51,6 @@ export class StartPostComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.createPostSub ? this.createPostSub.unsubscribe() : null;
+    this.userFullImagePathSub ? this.userFullImagePathSub.unsubscribe() : null;
   }
 }

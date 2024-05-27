@@ -1,16 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { PopoverComponent } from './popover/popover.component';
+import { Subscription } from 'rxjs';
+import { UserResponse } from 'src/app/auth/models/userResponse.interface';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
-  constructor(public popoverController: PopoverController) {}
+export class HeaderComponent implements OnInit, OnDestroy {
+  user!: UserResponse | null;
+  imagePath!: string;
+  private userFullImagePathSub!: Subscription;
+  private userBehaviorSubjectSub!: Subscription;
 
-  ngOnInit() {}
+  constructor(
+    public popoverController: PopoverController,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    this.userFullImagePathSub = this.authService.userFullImagePath.subscribe(
+      (imagePath: string) => {
+        this.imagePath = imagePath;
+      }
+    );
+
+    this.userBehaviorSubjectSub = this.authService.currentUser.subscribe(
+      (user: UserResponse | null) => {
+        this.user = user;
+      }
+    );
+  }
 
   async presentPopover(e: Event) {
     const popover = await this.popoverController.create({
@@ -24,5 +47,12 @@ export class HeaderComponent implements OnInit {
 
     const { role } = await popover.onDidDismiss();
     console.log(`Popover dismissed with role: ${role}`);
+  }
+
+  ngOnDestroy(): void {
+    this.userFullImagePathSub ? this.userFullImagePathSub.unsubscribe() : null;
+    this.userBehaviorSubjectSub
+      ? this.userBehaviorSubjectSub.unsubscribe()
+      : null;
   }
 }

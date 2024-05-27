@@ -16,12 +16,14 @@
     <ion-row class="ion-justify-content-start">
       <ion-col size="auto">
         <ion-avatar>
-          <ion-img src="/assets/images/me.jpg"></ion-img>
+          <ion-img [src]="imagePath"></ion-img>
         </ion-avatar>
       </ion-col>
       <ion-col>
         <div>
-          <ion-text>Alex Chu</ion-text>
+          <ion-text
+            >{{ user?.user?.firstName }} {{ user?.user?.lastName }}</ion-text
+          >
         </div>
         <ion-button size="small" shape="round" fill="outline" color="medium">
           <ion-icon color="dark" name="globe-outline"></ion-icon>

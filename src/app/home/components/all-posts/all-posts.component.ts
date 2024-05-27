@@ -40,22 +40,7 @@ export class AllPostsComponent implements OnInit, OnDestroy {
     this.loadData(null);
     this.loadNewPost();
     this.getCurrentUser();
-    // this.reloadData();
   }
-
-  // reloadData() {
-  //   this.router.events
-  //     .pipe(
-  //       filter(
-  //         (event): event is NavigationEnd => event instanceof NavigationEnd
-  //       )
-  //     )
-  //     .subscribe((event: NavigationEnd) => {
-  //       if (event.urlAfterRedirects === '/home') {
-  //         this.loadData(null);
-  //       }
-  //     });
-  // }
 
   getCurrentUser(): void {
     this.currentUserSub = this.authService.currentUser.subscribe({
@@ -83,6 +68,8 @@ export class AllPostsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (posts: Post[]) => {
           for (let post = 0; post < posts.length; post++) {
+            console.log(posts[post]);
+
             this.allLoadedPosts.push(posts[post]);
           }
 
@@ -135,6 +122,10 @@ export class AllPostsComponent implements OnInit, OnDestroy {
       }, //add notification for user
       error: (err) => console.error(err), //add notification for user
     });
+  }
+
+  getFullImagePath(imageName: string | undefined) {
+    return this.authService.getFullImagePath(imageName);
   }
 
   ngOnDestroy(): void {

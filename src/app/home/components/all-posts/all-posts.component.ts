@@ -128,6 +128,10 @@ export class AllPostsComponent implements OnInit, OnDestroy {
     return this.authService.getFullImagePath(imageName);
   }
 
+  getDefaultFullImagePath() {
+    return this.authService.getDefaultFullImagePath();
+  }
+
   ngOnDestroy(): void {
     this.getSelectedPostsSub ? this.getSelectedPostsSub.unsubscribe() : null;
     this.currentUserSub ? this.currentUserSub.unsubscribe() : null;

@@ -7,7 +7,11 @@
             <ion-col size="auto" class="ion-padding">
               <ion-avatar>
                 <ion-img
-                  [src]="getFullImagePath(post.author.imagePath)"
+                  [src]="
+                    post.author.imagePath
+                      ? getFullImagePath(post.author.imagePath)
+                      : getDefaultFullImagePath()
+                  "
                 ></ion-img>
               </ion-avatar>
             </ion-col>

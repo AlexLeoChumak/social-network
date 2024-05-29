@@ -22,7 +22,6 @@ export class AllPostsComponent implements OnInit, OnDestroy {
   numberOfPosts: number = 5;
   skipPosts: number = 0;
   currentUser!: UserResponse | null;
-  user: any;
 
   getSelectedPostsSub!: Subscription;
   getPostBehaviorSubjectSub!: Subscription;
@@ -45,6 +44,15 @@ export class AllPostsComponent implements OnInit, OnDestroy {
   getCurrentUser(): void {
     this.currentUserSub = this.authService.currentUser.subscribe({
       next: (currentUser) => {
+        if (currentUser) {
+          for (let post = 0; post < this.allLoadedPosts.length; post++) {
+            if (this.allLoadedPosts[post].author.id === currentUser.user.id) {
+              this.allLoadedPosts[post].author.imagePath =
+                currentUser.user.imagePath;
+            }
+          }
+        }
+
         this.currentUser = currentUser;
       },
       error: (err) => console.error(err), //add notification for user

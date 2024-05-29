@@ -68,8 +68,6 @@ export class AllPostsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (posts: Post[]) => {
           for (let post = 0; post < posts.length; post++) {
-            console.log(posts[post]);
-
             this.allLoadedPosts.push(posts[post]);
           }
 

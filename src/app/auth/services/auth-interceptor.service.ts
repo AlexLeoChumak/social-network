@@ -1,4 +1,5 @@
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -7,12 +8,13 @@ import {
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { Observable, catchError, from, switchMap, throwError } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthInterceptorService implements HttpInterceptor {
-  constructor() {}
+  constructor(private authSrvice: AuthService) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -34,7 +36,8 @@ export class AuthInterceptorService implements HttpInterceptor {
         }
         return next.handle(req);
       }),
-      catchError((err) => {
+      catchError((err: HttpErrorResponse) => {
+        err.status === 401 ? this.authSrvice.logout() : null;
         console.error(err);
         return throwError(() => err);
       })

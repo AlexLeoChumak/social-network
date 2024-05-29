@@ -16,7 +16,7 @@ import { GetResult, Preferences } from '@capacitor/preferences';
 import { jwtDecode } from 'jwt-decode';
 
 import { NewUser } from '../models/newUser.interface';
-import { Role, User } from '../models/user.interface';
+import { User } from '../models/user.interface';
 import { environment } from 'src/environments/environment';
 import { UserResponse } from '../models/userResponse.interface';
 

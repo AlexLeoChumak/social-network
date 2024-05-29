@@ -33,7 +33,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   user!: UserResponse | null;
   userFullImagePath!: string;
   form!: FormGroup;
-  private userRoleSub!: Subscription;
   private uploadUserImageSub!: Subscription;
   private userFullImagePathSub!: Subscription;
   private userBehaviorSubjectSub!: Subscription;
@@ -45,12 +44,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
       file: new FormControl(null),
     });
 
-    this.userRoleSub = this.authService.userRole.subscribe(
-      (role: Role | null) => {
-        role ? (this.bannerColors = this.getBannerColors(role)) : null;
-      }
-    );
-
     this.userFullImagePathSub = this.authService.userFullImagePath.subscribe(
       (fullImagePath: string) => {
         this.userFullImagePath = fullImagePath;
@@ -60,6 +53,9 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
     this.userBehaviorSubjectSub = this.authService.currentUser.subscribe(
       (user: UserResponse | null) => {
         this.user = user;
+        user?.user.role
+          ? (this.bannerColors = this.getBannerColors(user.user.role))
+          : null;
       }
     );
   }
@@ -107,7 +103,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.userRoleSub ? this.userRoleSub.unsubscribe() : null;
     this.uploadUserImageSub ? this.uploadUserImageSub.unsubscribe() : null;
     this.userFullImagePathSub ? this.userFullImagePathSub.unsubscribe() : null;
     this.userBehaviorSubjectSub

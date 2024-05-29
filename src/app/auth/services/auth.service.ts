@@ -7,7 +7,6 @@ import {
   Observable,
   catchError,
   from,
-  map,
   of,
   switchMap,
   tap,
@@ -34,7 +33,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  updateUserBehaviorSubject(newUser: UserResponse) {
+  updateUserBehaviorSubject(newUser: UserResponse | null) {
     this.user$.next(newUser);
   }
 
@@ -83,21 +82,21 @@ export class AuthService {
   }
 
   //?????
-  updateUserImagePath(imagePath: string): Observable<UserResponse | null> {
-    return this.user$.pipe(
-      map((userResponse: UserResponse | null) => {
-        if (userResponse) {
-          userResponse.user.imagePath = imagePath;
-          this.user$.next(userResponse);
-        }
-        return userResponse;
-      }),
-      catchError((err) => {
-        console.error(err);
-        return throwError(() => err);
-      })
-    );
-  }
+  // updateUserImagePath(imagePath: string): Observable<UserResponse | null> {
+  //   return this.user$.pipe(
+  //     map((userResponse: UserResponse | null) => {
+  //       if (userResponse) {
+  //         userResponse.user.imagePath = imagePath;
+  //         this.user$.next(userResponse);
+  //       }
+  //       return userResponse;
+  //     }),
+  //     catchError((err) => {
+  //       console.error(err);
+  //       return throwError(() => err);
+  //     })
+  //   );
+  // }
 
   uploadUserImage(formData: FormData): Observable<{ token: string }> {
     return this.http
@@ -111,7 +110,7 @@ export class AuthService {
 
           if (userResponse && responseWithImageName) {
             userResponse.user.imagePath = responseWithImageName.imagePath;
-            this.user$.next(userResponse);
+            this.updateUserBehaviorSubject(userResponse);
             return this.updatingTokenAfterChangingProfilePicture();
           }
 
@@ -172,18 +171,6 @@ export class AuthService {
     );
   }
 
-  get userRole(): Observable<Role | null> {
-    return this.user$.asObservable().pipe(
-      switchMap((userResponse: UserResponse | null) => {
-        return userResponse?.user ? of(userResponse.user.role) : of(null);
-      }),
-      catchError((err) => {
-        console.error(err);
-        return throwError(() => err);
-      })
-    );
-  }
-
   registerUser(newUser: NewUser): Observable<User> {
     return this.http
       .post<User>(
@@ -213,7 +200,7 @@ export class AuthService {
           });
 
           const decodedToken: UserResponse = jwtDecode(response.token);
-          this.user$.next(decodedToken);
+          this.updateUserBehaviorSubject(decodedToken);
 
           this.router.navigate(['/']);
         }),
@@ -239,7 +226,7 @@ export class AuthService {
         if (isExpired) return of(false);
 
         if (decodedToken.user) {
-          this.user$.next(decodedToken);
+          this.updateUserBehaviorSubject(decodedToken);
 
           return of(true);
         }
@@ -254,7 +241,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.user$.next(null);
+    this.updateUserBehaviorSubject(null);
     this.router.navigate(['/auth']);
     Preferences.remove({ key: 'token' });
   }

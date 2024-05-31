@@ -13,6 +13,7 @@ import { ProfileSummaryComponent } from './components/profile-summary/profile-su
 import { StartPostComponent } from './components/start-post/start-post.component';
 import { AllPostsComponent } from './components/all-posts/all-posts.component';
 import { TabsComponent } from './components/tabs/tabs.component';
+import { ConnectionProfileComponent } from './components/connection-profile/connection-profile.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
@@ -26,6 +27,7 @@ import { TabsComponent } from './components/tabs/tabs.component';
     StartPostComponent,
     AllPostsComponent,
     TabsComponent,
+    ConnectionProfileComponent,
   ],
 })
 export class HomePageModule {}

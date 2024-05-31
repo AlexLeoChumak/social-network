@@ -17,7 +17,17 @@ export class ConnectionProfileComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getUser().subscribe((q) => console.log(q));
+  }
+
+  getUser(): Observable<User> {
+    return this.getUserIdFromUrl().pipe(
+      switchMap((userId: number) => {
+        return this.connectionProfileService.getConnectionUser(userId);
+      })
+    );
+  }
 
   private getUserIdFromUrl(): Observable<number> {
     return this.route.params.pipe(map((params: Params) => +params['id']));

@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
+
 import { User } from 'src/app/auth/models/user.interface';
 import { environment } from 'src/environments/environment';
+import { FriendRequestStatus } from '../models/friend-request.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -21,5 +23,18 @@ export class ConnectionProfileService {
         return throwError(() => err);
       })
     );
+  }
+
+  getFriendRequestStatus(id: number): Observable<FriendRequestStatus> {
+    return this.http
+      .get<FriendRequestStatus>(
+        `${environment.baseApiUrl}/user/friend-request/status/${id}`
+      )
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
   }
 }

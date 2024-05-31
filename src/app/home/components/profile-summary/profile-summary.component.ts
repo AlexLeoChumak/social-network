@@ -2,18 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { Role } from 'src/app/auth/models/user.interface';
 import { UserResponse } from 'src/app/auth/models/userResponse.interface';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { BannerColorService } from '../../services/banner-color.service';
 
 type ValidFileExtension = 'png' | 'jpg' | 'jpeg';
 type ValidMimeType = 'image/png' | 'image/jpg' | 'image/jpeg';
-
-type BannerColors = {
-  colorOne: string;
-  colorTwo: string;
-  colorThree: string;
-};
 
 @Component({
   selector: 'app-profile-summary',
@@ -21,12 +15,6 @@ type BannerColors = {
   styleUrls: ['./profile-summary.component.scss'],
 })
 export class ProfileSummaryComponent implements OnInit, OnDestroy {
-  bannerColors: BannerColors = {
-    colorOne: '#a0b4b7',
-    colorTwo: '#dbe7e9',
-    colorThree: '#bfd3d6',
-  };
-
   validFileExtensions: ValidFileExtension[] = ['png', 'jpg', 'jpeg'];
   validMimeTypes: ValidMimeType[] = ['image/png', 'image/jpg', 'image/jpeg'];
 
@@ -37,7 +25,10 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   private userFullImagePathSub!: Subscription;
   private userBehaviorSubjectSub!: Subscription;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    public bannerColorService: BannerColorService
+  ) {}
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -54,7 +45,8 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
       (user: UserResponse | null) => {
         this.user = user;
         user?.user.role
-          ? (this.bannerColors = this.getBannerColors(user.user.role))
+          ? (this.bannerColorService.bannerColors =
+              this.bannerColorService.getBannerColors(user.user.role))
           : null;
       }
     );
@@ -79,26 +71,6 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
         });
 
       this.form.reset();
-    }
-  }
-
-  private getBannerColors(role: Role): BannerColors {
-    switch (role) {
-      case 'admin':
-        return {
-          colorOne: '#daa520',
-          colorTwo: '#f0e68c',
-          colorThree: '#fafad2',
-        };
-      case 'premium':
-        return {
-          colorOne: '#bc8f8f',
-          colorTwo: '#c09999',
-          colorThree: '#ddadaf',
-        };
-
-      default:
-        return this.bannerColors;
     }
   }
 

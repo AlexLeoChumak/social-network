@@ -9,5 +9,6 @@ export interface User {
   email: string;
   role: Role;
   imagePath?: string;
+  fullImagePath?: string;
   posts?: Post[];
 }

@@ -78,6 +78,7 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSub ? this.userSub.unsubscribe() : null;
+    this.addConnectionUserSub ? this.addConnectionUserSub.unsubscribe() : null;
     this.friendRequestStatusSub
       ? this.friendRequestStatusSub.unsubscribe()
       : null;

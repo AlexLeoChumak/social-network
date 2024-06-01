@@ -48,4 +48,10 @@ export class ConnectionProfileService {
       this.httpOptions
     );
   }
+
+  getFriendRequest(): Observable<FriendRequest[]> {
+    return this.http.get<FriendRequest[]>(
+      `${environment.baseApiUrl}/user/friend-request/me/received-requests`
+    );
+  }
 }

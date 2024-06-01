@@ -23,8 +23,21 @@
             <ion-icon name="home"></ion-icon>
             <span>Home</span>
           </ion-col>
-          <ion-col class="ion-hide-md-down" size="auto">
+          <ion-col
+            (click)="
+              connectionProfileService.friendRequests.length > 0 &&
+                presentFriendRequestPopover($event)
+            "
+            class="ion-hide-md-down"
+            size="auto"
+          >
             <ion-icon name="people"></ion-icon>
+            <ion-badge
+              *ngIf="connectionProfileService.friendRequests.length > 0"
+              ><small>{{
+                connectionProfileService.friendRequests.length
+              }}</small></ion-badge
+            >
             <span>My Network</span>
           </ion-col>
           <ion-col class="ion-hide-md-down" size="auto">
@@ -37,7 +50,7 @@
           </ion-col>
           <ion-col class="ion-hide-md-down" size="auto">
             <ion-icon name="notifications"></ion-icon>
-            <ion-badge><small>399</small></ion-badge>
+            <ion-badge><small>39</small></ion-badge>
             <span>Notifications</span>
           </ion-col>
           <ion-col size="auto" (click)="presentPopover($event)">

@@ -1,0 +1,30 @@
+:host {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-container {
+  display: flex;
+  width: 1128px;
+  margin: 80px auto 0;
+  @media (max-width: 1200px) {
+    justify-content: center;
+    width: auto;
+    margin-top: 0;
+  }
+}
+
+app-all-posts,
+.post-divider {
+  margin: 0 12px;
+}
+
+.post-divider {
+  padding-top: 8px;
+}
+
+app-tabs {
+  margin-top: auto;
+}

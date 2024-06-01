@@ -43,6 +43,7 @@
         "
       >
         <ion-button
+          (click)="addConnectionUser()"
           [disabled]="
             ['pending', 'waiting-for-current-user-response'].includes(
               friendRequestStatus

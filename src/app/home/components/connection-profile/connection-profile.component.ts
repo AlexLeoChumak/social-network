@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Observable, Subscription, map, switchMap } from 'rxjs';
+
 import { BannerColorService } from '../../services/banner-color.service';
 import { ConnectionProfileService } from '../../services/connection-profile.service';
-import { ActivatedRoute, Params, UrlSegment } from '@angular/router';
-import { Observable, Subscription, map, switchMap, tap } from 'rxjs';
 import { User } from 'src/app/auth/models/user.interface';
 import {
   FriendRequestStatus,
@@ -20,6 +21,7 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
   friendRequestStatus!: FriendRequestStatusType;
   friendRequestStatusSub!: Subscription;
   userSub!: Subscription;
+  addConnectionUserSub!: Subscription;
 
   constructor(
     public bannerColorService: BannerColorService,
@@ -48,6 +50,18 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
         return this.connectionProfileService.getConnectionUser(userId);
       })
     );
+  }
+
+  addConnectionUser(): void {
+    this.friendRequestStatus = 'pending';
+
+    this.addConnectionUserSub = this.getUserIdFromUrl()
+      .pipe(
+        switchMap((userId: number) => {
+          return this.connectionProfileService.addConnectionUser(userId);
+        })
+      )
+      .subscribe();
   }
 
   getFriendRequestStatus(): Observable<FriendRequestStatus> {

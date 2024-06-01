@@ -4,7 +4,10 @@ import { Observable, catchError, throwError } from 'rxjs';
 
 import { User } from 'src/app/auth/models/user.interface';
 import { environment } from 'src/environments/environment';
-import { FriendRequestStatus } from '../models/friend-request.interface';
+import {
+  FriendRequest,
+  FriendRequestStatus,
+} from '../models/friend-request.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -36,5 +39,13 @@ export class ConnectionProfileService {
           return throwError(() => err);
         })
       );
+  }
+
+  addConnectionUser(id: number): Observable<FriendRequest | { error: string }> {
+    return this.http.post<FriendRequest | { error: string }>(
+      `${environment.baseApiUrl}/user/friend-request/send/${id}`,
+      {},
+      this.httpOptions
+    );
   }
 }

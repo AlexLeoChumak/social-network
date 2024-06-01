@@ -42,16 +42,48 @@ export class ConnectionProfileService {
   }
 
   addConnectionUser(id: number): Observable<FriendRequest | { error: string }> {
-    return this.http.post<FriendRequest | { error: string }>(
-      `${environment.baseApiUrl}/user/friend-request/send/${id}`,
-      {},
-      this.httpOptions
-    );
+    return this.http
+      .post<FriendRequest | { error: string }>(
+        `${environment.baseApiUrl}/user/friend-request/send/${id}`,
+        {},
+        this.httpOptions
+      )
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
   }
 
   getFriendRequest(): Observable<FriendRequest[]> {
-    return this.http.get<FriendRequest[]>(
-      `${environment.baseApiUrl}/user/friend-request/me/received-requests`
-    );
+    return this.http
+      .get<FriendRequest[]>(
+        `${environment.baseApiUrl}/user/friend-request/me/received-requests`
+      )
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
+  }
+
+  responseToFriendRequest(
+    id: number,
+    statusResponse: 'accepted' | 'declined'
+  ): Observable<FriendRequest> {
+    return this.http
+      .post<FriendRequest>(
+        `${environment.baseApiUrl}/user/friend-request/response/${id}`,
+        { status: statusResponse },
+        this.httpOptions
+      )
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
   }
 }

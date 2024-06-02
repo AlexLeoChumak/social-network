@@ -13,6 +13,23 @@ import {
   providedIn: 'root',
 })
 export class ConnectionProfileService {
+  friendRequests: FriendRequest[] = [
+    {
+      id: 1,
+      creator: 2,
+      receiver: 1,
+      status: 'pending',
+      fullImagePath: '',
+    },
+    {
+      id: 2,
+      creator: 3,
+      receiver: 2,
+      status: 'pending',
+      fullImagePath: '',
+    },
+  ];
+
   private httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
@@ -74,7 +91,7 @@ export class ConnectionProfileService {
     statusResponse: 'accepted' | 'declined'
   ): Observable<FriendRequest> {
     return this.http
-      .post<FriendRequest>(
+      .patch<FriendRequest>(
         `${environment.baseApiUrl}/user/friend-request/response/${id}`,
         { status: statusResponse },
         this.httpOptions
@@ -85,5 +102,16 @@ export class ConnectionProfileService {
           return throwError(() => err);
         })
       );
+  }
+
+  respondToFriendRequest(
+    id: number,
+    statusResponse: 'accepted' | 'declined'
+  ): Observable<FriendRequest> {
+    return this.http.put<FriendRequest>(
+      `${environment.baseApiUrl}/user/friend-request/response/${id}`,
+      { status: statusResponse },
+      this.httpOptions
+    );
   }
 }

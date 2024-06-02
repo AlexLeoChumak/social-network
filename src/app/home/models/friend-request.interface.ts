@@ -14,4 +14,5 @@ export interface FriendRequest {
   creator: number;
   receiver: number;
   status?: FriendRequestStatusType;
+  fullImagePath?: string;
 }

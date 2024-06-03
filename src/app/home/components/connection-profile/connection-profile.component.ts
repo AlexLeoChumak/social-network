@@ -19,9 +19,10 @@ import { environment } from 'src/environments/environment';
 export class ConnectionProfileComponent implements OnInit, OnDestroy {
   user!: User;
   friendRequestStatus!: FriendRequestStatusType;
-  friendRequestStatusSub!: Subscription;
+
   userSub!: Subscription;
   addConnectionUserSub!: Subscription;
+  friendRequestStatusSub!: Subscription;
 
   constructor(
     public bannerColorService: BannerColorService,

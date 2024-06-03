@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 
 import { User } from 'src/app/auth/models/user.interface';
 import { environment } from 'src/environments/environment';
@@ -13,11 +13,22 @@ import {
   providedIn: 'root',
 })
 export class ConnectionProfileService {
+  private friendRequests$: BehaviorSubject<FriendRequest[]> =
+    new BehaviorSubject<FriendRequest[]>([]);
+
   private httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
   constructor(private http: HttpClient) {}
+
+  get friendRequests(): Observable<FriendRequest[]> {
+    return this.friendRequests$.asObservable();
+  }
+
+  setFriendRequests(newRequests: FriendRequest[]) {
+    this.friendRequests$.next(newRequests);
+  }
 
   getConnectionUser(id: number): Observable<User> {
     return this.http.get<User>(`${environment.baseApiUrl}/user/${id}`).pipe(
@@ -91,7 +102,7 @@ export class ConnectionProfileService {
     id: number,
     statusResponse: 'accepted' | 'declined'
   ): Observable<FriendRequest> {
-    return this.http.put<FriendRequest>(
+    return this.http.patch<FriendRequest>(
       `${environment.baseApiUrl}/user/friend-request/response/${id}`,
       { status: statusResponse },
       this.httpOptions

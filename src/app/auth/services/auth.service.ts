@@ -19,6 +19,7 @@ import { NewUser } from '../models/newUser.interface';
 import { User } from '../models/user.interface';
 import { environment } from 'src/environments/environment';
 import { UserResponse } from '../models/userResponse.interface';
+import { ConnectionProfileService } from 'src/app/home/services/connection-profile.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,11 @@ export class AuthService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private connectionProfileService: ConnectionProfileService
+  ) {}
 
   updateUserBehaviorSubject(newUser: UserResponse | null) {
     this.user$.next(newUser);
@@ -80,23 +85,6 @@ export class AuthService {
         })
       );
   }
-
-  //?????
-  // updateUserImagePath(imagePath: string): Observable<UserResponse | null> {
-  //   return this.user$.pipe(
-  //     map((userResponse: UserResponse | null) => {
-  //       if (userResponse) {
-  //         userResponse.user.imagePath = imagePath;
-  //         this.user$.next(userResponse);
-  //       }
-  //       return userResponse;
-  //     }),
-  //     catchError((err) => {
-  //       console.error(err);
-  //       return throwError(() => err);
-  //     })
-  //   );
-  // }
 
   uploadUserImage(formData: FormData): Observable<{ token: string }> {
     return this.http
@@ -201,7 +189,7 @@ export class AuthService {
 
           const decodedToken: UserResponse = jwtDecode(response.token);
           this.updateUserBehaviorSubject(decodedToken);
-
+          this.connectionProfileService.getFriendRequestsForBehaviorSubject();
           this.router.navigate(['/']);
         }),
         catchError((err) => {

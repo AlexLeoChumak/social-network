@@ -13,23 +13,6 @@ import {
   providedIn: 'root',
 })
 export class ConnectionProfileService {
-  friendRequests: FriendRequest[] = [
-    {
-      id: 1,
-      creator: 2,
-      receiver: 1,
-      status: 'pending',
-      fullImagePath: '',
-    },
-    {
-      id: 2,
-      creator: 3,
-      receiver: 2,
-      status: 'pending',
-      fullImagePath: '',
-    },
-  ];
-
   private httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };

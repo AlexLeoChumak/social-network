@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { Subscription, forkJoin, from, map, mergeMap, of, tap } from 'rxjs';
+import { Subscription, from, mergeMap, of, tap } from 'rxjs';
 
 import { User } from 'src/app/auth/models/user.interface';
 import { FriendRequest } from 'src/app/home/models/friend-request.interface';
@@ -14,8 +14,10 @@ import { environment } from 'src/environments/environment';
 })
 export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
   friendRequests: FriendRequest[] = [];
+  friendRequestsTemporaryArray: FriendRequest[] = [];
 
   private getFriendRequestSub!: Subscription;
+  private respondToFriendRequestSub!: Subscription;
 
   constructor(
     public connectionProfileService: ConnectionProfileService,
@@ -24,9 +26,15 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getFriendRequestWithRenderingUsersInPopover();
+
+    this.connectionProfileService.friendRequests.subscribe(
+      (friendRequests: FriendRequest[]) => {
+        this.friendRequests = friendRequests;
+      }
+    );
   }
 
-  getFriendRequestWithRenderingUsersInPopover() {
+  getFriendRequestWithRenderingUsersInPopover(): void {
     this.getFriendRequestSub = this.connectionProfileService
       .getFriendRequest()
       .pipe(
@@ -34,7 +42,7 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
         mergeMap((request: FriendRequest) => {
           const creatorId = (request as any)?.creator?.id;
 
-          if (creatorId) {
+          if (creatorId && request.status === 'pending') {
             return this.connectionProfileService
               .getConnectionUser(creatorId)
               .pipe(
@@ -42,7 +50,8 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
                   request['fullImagePath'] = `${
                     environment.baseApiUrl
                   }/feed/image/${user.imagePath || 'default-user-image.jpg'}`;
-                  this.friendRequests.push(request);
+
+                  this.friendRequestsTemporaryArray.push(request);
                 })
               );
           } else {
@@ -50,7 +59,13 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
           }
         })
       )
-      .subscribe();
+      .subscribe({
+        complete: () => {
+          this.connectionProfileService.setFriendRequests(
+            this.friendRequestsTemporaryArray
+          );
+        },
+      });
   }
 
   async respondToFriendRequest(
@@ -65,17 +80,21 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
     );
 
     this.friendRequests = unhandledFriendRequests;
+    this.connectionProfileService.setFriendRequests(this.friendRequests);
 
     if (this.friendRequests.length === 0) {
       await this.popoverController.dismiss();
     }
 
-    return this.connectionProfileService
+    this.respondToFriendRequestSub = this.connectionProfileService
       .respondToFriendRequest(id, statusResponse)
       .subscribe();
   }
 
   ngOnDestroy(): void {
     this.getFriendRequestSub ? this.getFriendRequestSub.unsubscribe() : null;
+    this.respondToFriendRequestSub
+      ? this.respondToFriendRequestSub.unsubscribe()
+      : null;
   }
 }

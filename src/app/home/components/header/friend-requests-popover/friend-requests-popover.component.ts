@@ -53,6 +53,28 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  async respondToFriendRequest(
+    id: number,
+    statusResponse: 'accepted' | 'declined'
+  ) {
+    const handledFriendRequest: FriendRequest | undefined =
+      this.friendRequests.find((friendRequest) => friendRequest.id === id);
+
+    const unhandledFriendRequests: FriendRequest[] = this.friendRequests.filter(
+      (friendRequest) => friendRequest.id !== handledFriendRequest?.id
+    );
+
+    this.friendRequests = unhandledFriendRequests;
+
+    if (this.friendRequests.length === 0) {
+      await this.popoverController.dismiss();
+    }
+
+    return this.connectionProfileService
+      .respondToFriendRequest(id, statusResponse)
+      .subscribe();
+  }
+
   ngOnDestroy(): void {
     this.getFriendRequestSub ? this.getFriendRequestSub.unsubscribe() : null;
   }

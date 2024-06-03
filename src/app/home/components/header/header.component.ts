@@ -17,11 +17,13 @@ import { ConnectionProfileService } from '../../services/connection-profile.serv
 export class HeaderComponent implements OnInit, OnDestroy {
   user!: UserResponse | null;
   imagePath!: string;
-  friendRequests!: FriendRequest[];
+  friendRequests: FriendRequest[] = [];
+  friendRequestsTemporaryArray: FriendRequest[] = [];
 
   private userFullImagePathSub!: Subscription;
   private userBehaviorSubjectSub!: Subscription;
   private friendRequestsSub!: Subscription;
+  private getFriendRequestSub!: Subscription;
 
   constructor(
     public popoverController: PopoverController,
@@ -42,12 +44,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.friendRequestsSub = this.connectionProfileService
+    this.getFriendRequestAndSetFriendRequests();
+
+    this.friendRequestsSub =
+      this.connectionProfileService.friendRequests.subscribe(
+        (friendRequests: FriendRequest[]) => {
+          this.friendRequests = friendRequests;
+        }
+      );
+  }
+
+  getFriendRequestAndSetFriendRequests() {
+    this.getFriendRequestSub = this.connectionProfileService
       .getFriendRequest()
-      .subscribe((friendRequest: FriendRequest[]) => {
-        this.connectionProfileService.friendRequests = friendRequest.filter(
-          (friendRequest: FriendRequest) => friendRequest.status === 'pending'
-        );
+      .subscribe({
+        next: (friendRequest: FriendRequest[]) => {
+          this.friendRequestsTemporaryArray = friendRequest.filter(
+            (friendRequest: FriendRequest) => friendRequest.status === 'pending'
+          );
+
+          this.connectionProfileService.setFriendRequests(
+            this.friendRequestsTemporaryArray
+          );
+        },
       });
   }
 
@@ -84,6 +103,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userBehaviorSubjectSub
       ? this.userBehaviorSubjectSub.unsubscribe()
       : null;
+    this.getFriendRequestSub ? this.getFriendRequestSub.unsubscribe() : null;
     this.friendRequestsSub ? this.friendRequestsSub.unsubscribe() : null;
   }
 }

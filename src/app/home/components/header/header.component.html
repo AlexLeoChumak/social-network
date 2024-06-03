@@ -25,18 +25,14 @@
           </ion-col>
           <ion-col
             (click)="
-              connectionProfileService.friendRequests.length > 0 &&
-                presentFriendRequestPopover($event)
+              friendRequests.length > 0 && presentFriendRequestPopover($event)
             "
             class="ion-hide-md-down"
             size="auto"
           >
             <ion-icon name="people"></ion-icon>
-            <ion-badge
-              *ngIf="connectionProfileService.friendRequests.length > 0"
-              ><small>{{
-                connectionProfileService.friendRequests.length
-              }}</small></ion-badge
+            <ion-badge *ngIf="friendRequests.length > 0"
+              ><small>{{ friendRequests.length }}</small></ion-badge
             >
             <span>My Network</span>
           </ion-col>

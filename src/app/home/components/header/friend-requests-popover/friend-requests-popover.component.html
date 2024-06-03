@@ -1,15 +1,11 @@
-<ion-card *ngIf="this.connectionProfileService?.friendRequests">
+<ion-card *ngIf="friendRequests.length > 0">
   <ion-card-header>
     <ion-grid>
-      <ng-container
-        *ngFor="
-          let friendRequest of this.connectionProfileService.friendRequests
-        "
-      >
+      <ng-container *ngFor="let friendRequest of friendRequests">
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col size="auto">
             <ion-avatar>
-              <ion-img [src]="$any(friendRequest).fullImagePath"></ion-img>
+              <ion-img [src]="friendRequest.fullImagePath"></ion-img>
             </ion-avatar>
           </ion-col>
           <ion-col>

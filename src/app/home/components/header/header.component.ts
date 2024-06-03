@@ -105,5 +105,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       : null;
     this.getFriendRequestSub ? this.getFriendRequestSub.unsubscribe() : null;
     this.friendRequestsSub ? this.friendRequestsSub.unsubscribe() : null;
+    this.connectionProfileService.unsubscribe(); // Вызов метода отписки из сервиса
   }
 }

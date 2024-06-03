@@ -1,6 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Observable,
+  Subject,
+  catchError,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 
 import { User } from 'src/app/auth/models/user.interface';
 import { environment } from 'src/environments/environment';
@@ -16,6 +26,8 @@ export class ConnectionProfileService {
   private friendRequests$: BehaviorSubject<FriendRequest[]> =
     new BehaviorSubject<FriendRequest[]>([]);
 
+  private destroy$: Subject<void> = new Subject<void>();
+
   private httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
@@ -28,6 +40,23 @@ export class ConnectionProfileService {
 
   setFriendRequests(newRequests: FriendRequest[]) {
     this.friendRequests$.next(newRequests);
+  }
+
+  getFriendRequestsForBehaviorSubject(): void {
+    this.getFriendRequest()
+      .pipe(
+        tap((friendRequests: FriendRequest[]) => {
+          this.setFriendRequests(friendRequests);
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+  }
+
+  //при уничтожении HeaderComponent будет вызван его ngOnDestroy, который вызов метод ниже - unsubscribe()
+  unsubscribe() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getConnectionUser(id: number): Observable<User> {

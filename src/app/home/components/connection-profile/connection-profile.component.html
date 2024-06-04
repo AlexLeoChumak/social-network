@@ -39,16 +39,16 @@
         *ngIf="
           ['not-sent', 'pending', 'waiting-for-current-user-response'].includes(
             friendRequestStatus
-          )
+          ) && authorizedUserId !== userIdFromUrlParams
         "
       >
         <ion-button
-          (click)="addConnectionUser()"
-          [disabled]="
-            ['pending', 'waiting-for-current-user-response'].includes(
-              friendRequestStatus
-            )
+          (click)="
+            friendRequestStatus === 'not-sent'
+              ? addConnectionUser()
+              : respondToFriendRequest('accepted')
           "
+          [disabled]="['pending'].includes(friendRequestStatus)"
           shape="round"
           >{{
             friendRequestStatus === "waiting-for-current-user-response"
@@ -56,12 +56,26 @@
               : "Connect"
           }}</ion-button
         >
+
+        <ion-button
+          *ngIf="friendRequestStatus === 'waiting-for-current-user-response'"
+          (click)="respondToFriendRequest('declined')"
+          shape="round"
+          >Decline Request</ion-button
+        >
       </ng-container>
+
       <ion-button fill="outline">
         <ion-icon slot="start" name="lock-closed"></ion-icon>
         Message
       </ion-button>
-      <ion-button fill="outline" shape="round">More</ion-button>
+      <ion-button fill="outline" shape="round" (click)="log()">More</ion-button>
+      <ion-button fill="outline" shape="round" [routerLink]="['/home', '1']"
+        >1</ion-button
+      >
+      <ion-button fill="outline" shape="round" [routerLink]="['/home', '2']"
+        >2</ion-button
+      >
     </ion-card-content>
   </ion-card>
 </ion-content>

@@ -68,6 +68,7 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
       });
   }
 
+  //принять или отклонить запрос в друзья
   async respondToFriendRequest(
     id: number,
     statusResponse: 'accepted' | 'declined'

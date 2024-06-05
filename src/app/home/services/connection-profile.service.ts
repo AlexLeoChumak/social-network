@@ -2,11 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
-  EMPTY,
   Observable,
   Subject,
   catchError,
-  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -24,7 +22,7 @@ import {
 })
 export class ConnectionProfileService {
   private friendRequests$: BehaviorSubject<FriendRequest[]> =
-    new BehaviorSubject<FriendRequest[]>([]);
+    new BehaviorSubject<FriendRequest[]>([]); //массив с запросами в друзья для текущего юзера
 
   private destroy$: Subject<void> = new Subject<void>();
 
@@ -48,12 +46,12 @@ export class ConnectionProfileService {
         tap((friendRequests: FriendRequest[]) => {
           this.setFriendRequests(friendRequests);
         }),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$) //будет вызван в unsubscribe()
       )
       .subscribe();
   }
 
-  //при уничтожении HeaderComponent будет вызван его ngOnDestroy, который вызов метод ниже - unsubscribe()
+  //при уничтожении HeaderComponent будет вызван его ngOnDestroy, который вызовет метод ниже - unsubscribe()
   unsubscribe() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -81,6 +79,8 @@ export class ConnectionProfileService {
       );
   }
 
+  //adding as a friend
+  //добавление в друзья
   addConnectionUser(id: number): Observable<FriendRequest | { error: string }> {
     return this.http
       .post<FriendRequest | { error: string }>(

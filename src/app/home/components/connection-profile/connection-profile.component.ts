@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { EMPTY, Observable, Subscription, map, of, switchMap, tap } from 'rxjs';
+import { Observable, Subscription, map, of, switchMap } from 'rxjs';
 
 import { BannerColorService } from '../../services/banner-color.service';
 import { ConnectionProfileService } from '../../services/connection-profile.service';
@@ -43,10 +43,17 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.connectionProfileService.friendRequests.subscribe(
       (friendRequests: FriendRequest[]) => {
+        console.log('=== change ===');
+        
         this.friendRequests = friendRequests;
-        console.log(this.friendRequests);
       }
     );
+
+    this.friendRequestStatusSub = this.getFriendRequestStatus().subscribe({
+      next: (friendRequestStatus: FriendRequestStatus) => {
+        this.friendRequestStatus = friendRequestStatus.status;
+      },
+    });
 
     this.userSub = this.getUser().subscribe((user: User) => {
       this.user = user;
@@ -56,11 +63,6 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
       ] = `${environment.baseApiUrl}/feed/image/${imgPath}`;
     });
 
-    this.friendRequestStatusSub = this.getFriendRequestStatus().subscribe({
-      next: (friendRequestStatus: FriendRequestStatus) => {
-        this.friendRequestStatus = friendRequestStatus.status;
-      },
-    });
 
     this.getUserIdFromUrlSub = this.getUserIdFromUrl().subscribe(
       (userId: number) => {
@@ -125,6 +127,9 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
 
   //принять или отклонить запрос в друзья
   respondToFriendRequest(statusResponse: 'accepted' | 'declined') {
+
+    this.friendRequestStatus = statusResponse === 'accepted' ? 'accepted' : 'declined'
+
     this.respondToFriendRequestSub = this.getUserIdFromUrl()
       .pipe(
         switchMap((userIdFromUrl: number) => {
@@ -132,6 +137,10 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
             (request: FriendRequest) =>
               (request as any).creator.id === userIdFromUrl
           );
+
+          const friendRequests: FriendRequest[] = this.friendRequests.filter((friendRequest) => friendRequest.id !== request?.id)
+          this.connectionProfileService.setFriendRequests(friendRequests)
+          
           return of(request?.id as number);
         }),
         switchMap((requestId: number) => {

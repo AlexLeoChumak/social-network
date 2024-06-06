@@ -44,6 +44,7 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
     this.connectionProfileService.friendRequests.subscribe(
       (friendRequests: FriendRequest[]) => {
         console.log('=== change ===');
+        console.log(friendRequests);
         
         this.friendRequests = friendRequests;
       }

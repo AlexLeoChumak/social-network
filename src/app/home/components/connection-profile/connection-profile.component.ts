@@ -80,10 +80,6 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  log() {
-    console.log('status', this.friendRequestStatus);
-  }
-
   getUser(): Observable<User> {
     return this.getUserIdFromUrl().pipe(
       switchMap((userId: number) => {

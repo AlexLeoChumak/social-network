@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import {
   FriendRequest,
   FriendRequestStatus,
+  FriendRequestStatusType,
 } from '../models/friend-request.interface';
 
 @Injectable({
@@ -24,7 +25,7 @@ export class ConnectionProfileService {
   private friendRequests$: BehaviorSubject<FriendRequest[]> =
     new BehaviorSubject<FriendRequest[]>([]); //массив с запросами в друзья для текущего юзера
 
-  private friendRequestStatus$: BehaviorSubject<string> = new BehaviorSubject<string>('')
+  private friendRequestStatus$: BehaviorSubject<FriendRequestStatusType> = new BehaviorSubject<FriendRequestStatusType>('not-sent')
 
   private destroy$: Subject<void> = new Subject<void>();
 
@@ -42,11 +43,11 @@ export class ConnectionProfileService {
     this.friendRequests$.next(newRequests);
   }
 
-  get friendRequestStatus(): Observable<string> {
+  get friendRequestStatus(): Observable<FriendRequestStatusType> {
     return this.friendRequestStatus$.asObservable()
   }
 
-  setFriendRequestStatus(newStatus: string): void {
+  setFriendRequestStatus(newStatus: FriendRequestStatusType): void {
     this.friendRequestStatus$.next(newStatus)
   }
 

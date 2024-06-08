@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Observable, Subscription, map, of, switchMap } from 'rxjs';
+import { Observable, Subscription, map, of, switchMap, tap } from 'rxjs';
 
 import { BannerColorService } from '../../services/banner-color.service';
 import { ConnectionProfileService } from '../../services/connection-profile.service';
@@ -43,18 +43,21 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.connectionProfileService.friendRequests.subscribe(
       (friendRequests: FriendRequest[]) => {
-        console.log('=== change ===');
         console.log(friendRequests);
-        
         this.friendRequests = friendRequests;
       }
     );
 
-    this.friendRequestStatusSub = this.getFriendRequestStatus().subscribe({
-      next: (friendRequestStatus: FriendRequestStatus) => {
-        this.friendRequestStatus = friendRequestStatus.status;
-      },
-    });
+    this.friendRequestStatusSub = this.getFriendRequestStatus().pipe(
+      tap((status: FriendRequestStatus) => {
+        this.connectionProfileService.setFriendRequestStatus(status.status)
+      }),
+      switchMap((status: FriendRequestStatus) => {
+        return this.connectionProfileService.friendRequestStatus
+      })
+    ).subscribe((status: FriendRequestStatusType) => {
+      this.friendRequestStatus = status
+    })
 
     this.userSub = this.getUser().subscribe((user: User) => {
       this.user = user;

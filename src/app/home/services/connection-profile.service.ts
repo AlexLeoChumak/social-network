@@ -24,6 +24,8 @@ export class ConnectionProfileService {
   private friendRequests$: BehaviorSubject<FriendRequest[]> =
     new BehaviorSubject<FriendRequest[]>([]); //массив с запросами в друзья для текущего юзера
 
+  private friendRequestStatus$: BehaviorSubject<string> = new BehaviorSubject<string>('')
+
   private destroy$: Subject<void> = new Subject<void>();
 
   private httpOptions: { headers: HttpHeaders } = {
@@ -36,8 +38,16 @@ export class ConnectionProfileService {
     return this.friendRequests$.asObservable();
   }
 
-  setFriendRequests(newRequests: FriendRequest[]) {
+  setFriendRequests(newRequests: FriendRequest[]): void {
     this.friendRequests$.next(newRequests);
+  }
+
+  get friendRequestStatus(): Observable<string> {
+    return this.friendRequestStatus$.asObservable()
+  }
+
+  setFriendRequestStatus(newStatus: string): void {
+    this.friendRequestStatus$.next(newStatus)
   }
 
   getFriendRequestsForBehaviorSubject(): void {

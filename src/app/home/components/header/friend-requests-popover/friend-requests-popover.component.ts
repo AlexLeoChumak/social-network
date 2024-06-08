@@ -82,6 +82,7 @@ export class FriendRequestsPopoverComponent implements OnInit, OnDestroy {
 
     this.friendRequests = unhandledFriendRequests;
     this.connectionProfileService.setFriendRequests(this.friendRequests);
+    this.connectionProfileService.setFriendRequestStatus(statusResponse)
 
     if (this.friendRequests.length === 0) {
       await this.popoverController.dismiss();

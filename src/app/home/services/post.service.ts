@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 
 import { Post } from '../models/post.interface';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { ErrorHandlerService } from 'src/app/core/error-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,19 +18,36 @@ export class PostService {
   private post$: BehaviorSubject<Post | null> =
     new BehaviorSubject<Post | null>(null);
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private errorHandlerService: ErrorHandlerService
+  ) {}
 
   getSelectedPosts(params: string) {
     return this.http
       .get<Post[]>(`${environment.baseApiUrl}/feed/pagination${params}`)
       .pipe(
-        catchError((err) => {
-          err.error.statusCode === 401 ? this.authService.logout() : null;
-          console.error(err);
-          return throwError(() => err);
-        })
+        tap((posts: Post[]) => {
+          if (posts.length === 0) throw new Error('No posts to retrieve');
+        }),
+        catchError(
+          this.errorHandlerService.handleError<Post[]>('getSelectedPosts', [])
+        )
       );
   }
+
+  // getSelectedPosts(params: string) {
+  //   return this.http
+  //     .get<Post[]>(`${environment.baseApiUrl}/feed/pagination${params}`)
+  //     .pipe(
+  //       catchError((err) => {
+  //         err.error.statusCode === 401 ? this.authService.logout() : null;
+  //         console.error(err);
+  //         return throwError(() => err);
+  //       })
+  //     );
+  // }
 
   createPost(body: string) {
     return this.http

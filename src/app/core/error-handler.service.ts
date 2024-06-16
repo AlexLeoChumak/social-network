@@ -12,7 +12,7 @@ export class ErrorHandlerService {
     const toast = await this.toastController.create({
       header: 'Error occured',
       message: errorMessage,
-      duration: 2000,
+      duration: 2500,
       color: 'danger',
       buttons: [
         {

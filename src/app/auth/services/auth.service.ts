@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   BehaviorSubject,
@@ -35,7 +35,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private connectionProfileService: ConnectionProfileService
+    @Optional() private connectionProfileService: ConnectionProfileService
   ) {}
 
   updateUserBehaviorSubject(newUser: UserResponse | null) {

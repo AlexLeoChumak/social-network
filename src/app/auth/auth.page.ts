@@ -30,7 +30,6 @@ export class AuthPage implements OnInit, OnDestroy {
       this.loginSub = this.authService.login(email, password).subscribe({
         next: (res) => {
           this.form.reset();
-          console.log(res);
         },
         // добавить логику для мэсэджа юзеру
         error: (err) => console.log(err),

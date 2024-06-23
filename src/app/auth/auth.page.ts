@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
-import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-auth',

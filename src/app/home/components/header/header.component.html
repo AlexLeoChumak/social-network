@@ -49,7 +49,11 @@
             <ion-badge><small>39</small></ion-badge>
             <span>Notifications</span>
           </ion-col>
-          <ion-col size="auto" (click)="presentPopover($event)">
+          <ion-col
+            size="auto"
+            class="popover-menu"
+            (click)="presentPopover($event)"
+          >
             <ion-avatar>
               <ion-img [src]="imagePath" alt="avatar"></ion-img>
             </ion-avatar>

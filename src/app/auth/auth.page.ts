@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
+
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -25,7 +26,7 @@ export class AuthPage implements OnInit, OnDestroy {
 
     const { firstName, lastName, email, password } = this.form.value;
 
-    if (this.submissionType === 'login') {
+    if (this.submissionType === 'join') {
       this.loginSub = this.authService.login(email, password).subscribe({
         next: (res) => {
           this.form.reset();

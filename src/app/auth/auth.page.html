@@ -91,12 +91,12 @@
         <ion-text color="primary">Cookie Policy</ion-text>
       </div>
       <ion-button
-        [disabled]="form.invalid || isSubmitted"
+        [disabled]="form.invalid"
         type="submit"
         shape="round"
         expand="block"
       >
-        {{ submissionType === 'join' ? 'Accept & Join' : 'Sign In' }}
+        {{ submissionType === 'login' ? 'Sign in' : 'Accept & Join' }}
       </ion-button>
     </ion-card>
   </form>

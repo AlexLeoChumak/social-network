@@ -2,7 +2,7 @@
   <ion-toolbar>
     <div class="toolbar-wrapper">
       <ion-buttons slot="start" class="ion-no-padding">
-        <ion-button>
+        <ion-button [routerLink]="['/home']">
           <ion-icon
             class="social-logo"
             color="primary"
@@ -19,7 +19,11 @@
 
       <ion-grid>
         <ion-row class="ion-justify-content-end">
-          <ion-col class="ion-hide-md-down" size="auto">
+          <ion-col
+            [routerLink]="['/home']"
+            class="ion-hide-md-down"
+            size="auto"
+          >
             <ion-icon name="home"></ion-icon>
             <span>Home</span>
           </ion-col>
@@ -40,7 +44,11 @@
             <ion-icon name="briefcase"></ion-icon>
             <span>Jobs</span>
           </ion-col>
-          <ion-col class="ion-hide-md-down" size="auto">
+          <ion-col
+            [routerLink]="['/home/chat/connections']"
+            class="ion-hide-md-down"
+            size="auto"
+          >
             <ion-icon name="chatbox-ellipses"></ion-icon>
             <span>Messaging</span>
           </ion-col>

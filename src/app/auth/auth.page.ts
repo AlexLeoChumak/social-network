@@ -26,7 +26,7 @@ export class AuthPage implements OnInit, OnDestroy {
 
     const { firstName, lastName, email, password } = this.form.value;
 
-    if (this.submissionType === 'join') {
+    if (this.submissionType === 'login') {
       this.loginSub = this.authService.login(email, password).subscribe({
         next: (res) => {
           this.form.reset();

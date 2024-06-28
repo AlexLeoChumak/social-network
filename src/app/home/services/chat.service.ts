@@ -1,22 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+
 import { User } from 'src/app/auth/models/user.interface';
+import { ChatSocketService } from 'src/app/core/chat-socket.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  constructor(private socket: Socket, private http: HttpClient) {}
+  constructor(
+    private chatSocketService: ChatSocketService,
+    private http: HttpClient
+  ) {}
 
   sendMessage(message: string): void {
-    this.socket.emit('sendMessage', message);
+    this.chatSocketService.emit('sendMessage', message);
   }
 
   getNewMessage(): Observable<string> {
-    return this.socket.fromEvent<string>('newMessage');
+    return this.chatSocketService.fromEvent<string>('newMessage');
   }
 
   getFriends(): Observable<User[]> {

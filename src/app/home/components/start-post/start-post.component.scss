@@ -2,8 +2,10 @@ ion-card {
   width: 525px;
   box-shadow: none;
   border: 1px solid var(--ion-color-card-user);
+
   @media (max-width: 576px) {
     width: 500px;
+    margin-top: 90px;
   }
   @media (max-width: 525px) {
     width: 420px;

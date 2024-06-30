@@ -48,16 +48,18 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.friendRequestStatusSub = this.getFriendRequestStatus().pipe(
-      tap((status: FriendRequestStatus) => {
-        this.connectionProfileService.setFriendRequestStatus(status.status)
-      }),
-      switchMap((status: FriendRequestStatus) => {
-        return this.connectionProfileService.friendRequestStatus
-      })
-    ).subscribe((status: FriendRequestStatusType) => {
-      this.friendRequestStatus = status
-    })
+    this.friendRequestStatusSub = this.getFriendRequestStatus()
+      .pipe(
+        tap((status: FriendRequestStatus) => {
+          this.connectionProfileService.setFriendRequestStatus(status.status);
+        }),
+        switchMap((status: FriendRequestStatus) => {
+          return this.connectionProfileService.friendRequestStatus;
+        })
+      )
+      .subscribe((status: FriendRequestStatusType) => {
+        this.friendRequestStatus = status;
+      });
 
     this.userSub = this.getUser().subscribe((user: User) => {
       this.user = user;
@@ -67,7 +69,6 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
       ] = `${environment.baseApiUrl}/feed/image/${imgPath}`;
     });
 
-
     this.getUserIdFromUrlSub = this.getUserIdFromUrl().subscribe(
       (userId: number) => {
         this.userIdFromUrlParams = userId;
@@ -76,7 +77,7 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
 
     this.currentUserSub = this.authService.currentUser.subscribe(
       (authorizedUser: UserResponse | null) => {
-        if (authorizedUser) {
+        if (authorizedUser && authorizedUser.user.id) {
           this.authorizedUserId = authorizedUser.user.id;
         }
       }
@@ -127,8 +128,8 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
 
   //принять или отклонить запрос в друзья
   respondToFriendRequest(statusResponse: 'accepted' | 'declined') {
-
-    this.friendRequestStatus = statusResponse === 'accepted' ? 'accepted' : 'declined'
+    this.friendRequestStatus =
+      statusResponse === 'accepted' ? 'accepted' : 'declined';
 
     this.respondToFriendRequestSub = this.getUserIdFromUrl()
       .pipe(
@@ -138,9 +139,11 @@ export class ConnectionProfileComponent implements OnInit, OnDestroy {
               (request as any).creator.id === userIdFromUrl
           );
 
-          const friendRequests: FriendRequest[] = this.friendRequests.filter((friendRequest) => friendRequest.id !== request?.id)
-          this.connectionProfileService.setFriendRequests(friendRequests)
-          
+          const friendRequests: FriendRequest[] = this.friendRequests.filter(
+            (friendRequest) => friendRequest.id !== request?.id
+          );
+          this.connectionProfileService.setFriendRequests(friendRequests);
+
           return of(request?.id as number);
         }),
         switchMap((requestId: number) => {

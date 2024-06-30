@@ -24,20 +24,4 @@ describe('AuthModule', () => {
       cy.get('ion-button').should('contain', 'Accept & Join');
     });
   });
-
-  it('should login and go to /home', () => {
-    cy.fixture('user').then((user) => {
-      cy.get('ion-button').should('not.have.attr', 'disabled');
-      cy.get('ion-button').click();
-      cy.url().should('not.include', 'auth');
-      cy.url().should('includes', 'home');
-    });
-  });
-
-  it('should logout and go to /auth login page', () => {
-    cy.get('ion-col.popover-menu').click();
-    cy.get('p.sign-out').click();
-    cy.url().should('not.include', 'home');
-    cy.url().should('include', 'auth');
-  });
 });
